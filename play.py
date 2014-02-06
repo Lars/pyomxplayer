@@ -13,11 +13,11 @@ est=pytz.timezone('America/New_York')
 # Logging
 try:
     import logging
-    logger = logging.getLogger('play')
+    logger = logging.getLogger(__name__)
     logger.setLevel(logging.INFO)
     
     # create a file handler
-    handler = logging.FileHandler('/home/pi/play.log')
+    handler = logging.FileHandler('/home/pi/play.log',mode='a')
     handler.setLevel(logging.INFO)
     ch = logging.StreamHandler()
     ch.setLevel(logging.INFO)

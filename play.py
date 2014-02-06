@@ -7,8 +7,22 @@ import subprocess
 
 from datetime import datetime, timedelta
 from dateutil import parse4
+
+# Logging
 import logging
-logging.basicConfig(filename='play.log',level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+# create a file handler
+handler = logging.FileHandler('/home/pi/play.log')
+handler.setLevel(logging.INFO)
+
+# create a logging format
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+
+# add the handlers to the logger
+logger.addHandler(handler)
 
 
 DELAY_AFTER_PRESSING_START = .5
@@ -16,9 +30,9 @@ DELAY_IN_CHECK_POS = .4
 SOCK_DIR = '/var/run/salt/minion'
 
 if len(sys.argv) <= 1:
-    logging.debug("Need a file to play")
+    logger.debug("Need a file to play")
     sys.exit()
-logging.info("Attempting to play ", str(sys.argv[1]))
+logger.info("Attempting to play ", str(sys.argv[1]))
 
 
 #checks to see if movie is moving or if it's over
@@ -26,7 +40,7 @@ def checkpos():
     p = o.position
     time.sleep(DELAY_IN_CHECK_POS)
     if p == o.position:
-        logging.info(o.position)
+        logger.info(o.position)
         return 'stopped'
     else:
         return "playing"
@@ -35,17 +49,17 @@ def checkpos():
 def wait_for_starttime(iso_format_starttime):
     try:
         starttime = parser.parse(iso_format_starttime)
-        logging.info("Waiting until " + str(starttime))
+        logger.info("Waiting until " + str(starttime))
         while(datetime.now() < starttime):
             time.sleep(.1)
-        logging.info("Done waiting")
+        logger.info("Done waiting")
     except:
-        logging.debug("Improperly formatted starttime: was it ISO?")
+        logger.debug("Improperly formatted starttime: was it ISO?")
     return
 
 #load movie and start paused
 o = OMXPlayer(sys.argv[1])  # carpenter1.mov 'carp/carp/carpenter1_ge.mov'
-logging.info("OMXPlayer is: {}".format(str(o)))
+logger.info("OMXPlayer is: {}".format(str(o)))
 o.pause()
 
 #check to see if there's a starttime, in iso format, in which case wait
@@ -54,12 +68,13 @@ if len(sys.argv) <= 2:
 
 os.system('killall cat')
 o.play()
-logging.info("Playing")
+logger.info("Playing")
 time.sleep(DELAY_AFTER_PRESSING_START)  # helps prevent instant stopping if computer hangs on start of play
 
 while(1):
     status = checkpos()
     if status == 'stopped':
+        logger.info("Stopped.")
         o.stop()  # to ensure we don't lock up the machine by leaving omxplayer hanging
 
         # regain screen if omxplayer has hogged it
@@ -71,6 +86,7 @@ while(1):
         os.system('cat /dev/urandom > /dev/tty1 &')
 
         # notify salt master that it's over
+        logger.info('Phoning home')
         payload = {'data': 'stopped'}
         os.system("""salt-call event.fire_master '{"data": "stopped"}'  'omx'""")
         sys.exit("Stopped")

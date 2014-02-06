@@ -79,7 +79,7 @@ try:
     o = OMXPlayer(sys.argv[1])  # carpenter1.mov 'carp/carp/carpenter1_ge.mov'
 except Exception, e:
     logger.error('Failed to open movie?', exc_info=True)
-    
+
 logger.info("OMXPlayer is: {}".format(str(o)))
 o.pause()
 
@@ -110,5 +110,8 @@ while(1):
         logger.info('Phoning home.')
         payload = {'data': 'stopped'}
         os.system("""salt-call event.fire_master '{"data": "stopped"}'  'omx'""")
+        logger.info("killing salt minions")
+        os.system('killall salt-minion')
+        os.system('salt-minion -d')
         logger.info('Play me out, piano cat.')
         sys.exit("Stopped")

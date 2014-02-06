@@ -9,20 +9,23 @@ from datetime import datetime, timedelta
 from dateutil import parse4
 
 # Logging
-import logging
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-
-# create a file handler
-handler = logging.FileHandler('/home/pi/play.log')
-handler.setLevel(logging.INFO)
-
-# create a logging format
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-
-# add the handlers to the logger
-logger.addHandler(handler)
+try:
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
+    
+    # create a file handler
+    handler = logging.FileHandler('/home/pi/play.log')
+    handler.setLevel(logging.INFO)
+    
+    # create a logging format
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    
+    # add the handlers to the logger
+    logger.addHandler(handler)
+except Exception, e:
+    logger.error('Failed to open logger', exc_info=True)
 
 
 DELAY_AFTER_PRESSING_START = .5

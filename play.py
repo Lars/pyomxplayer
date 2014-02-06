@@ -75,7 +75,11 @@ def wait_for_starttime(iso_format_starttime):
     return
 
 #load movie and start paused
-o = OMXPlayer(sys.argv[1])  # carpenter1.mov 'carp/carp/carpenter1_ge.mov'
+try:
+    o = OMXPlayer(sys.argv[1])  # carpenter1.mov 'carp/carp/carpenter1_ge.mov'
+except Exception, e:
+    logger.error('Failed to open movie?', exc_info=True)
+    
 logger.info("OMXPlayer is: {}".format(str(o)))
 o.pause()
 

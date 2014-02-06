@@ -59,8 +59,8 @@ def wait_for_starttime(iso_format_starttime):
     try:
         starttime = parser.parse(iso_format_starttime)
         print (starttime - est.localize(datetime.now())).seconds
-        logger.info("It is currently " + str(datetime.now())
-        logger.info("Waiting until " + str(starttime))
+        logger.info("It is currently {}".format(str(datetime.now())))
+        logger.info("Waiting until {}".format(str(starttime))
         while(est.localize(datetime.now()) < starttime):
             time.sleep(.1)
         logger.info("Done waiting")

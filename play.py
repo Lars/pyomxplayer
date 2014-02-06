@@ -6,7 +6,7 @@ import salt.utils.event
 import subprocess
 
 from datetime import datetime, timedelta
-from dateutil import parse4
+from dateutil import parser
 
 # Logging
 try:
@@ -52,11 +52,15 @@ def checkpos():
 def wait_for_starttime(iso_format_starttime):
     try:
         starttime = parser.parse(iso_format_starttime)
+        print starttime - datetime.now()
         logger.info("Waiting until " + str(starttime))
         while(datetime.now() < starttime):
             time.sleep(.1)
         logger.info("Done waiting")
-    except:
+    except Exception, e:
+        print "exception"
+        print Exception
+        print e
         logger.debug("Improperly formatted starttime: was it ISO?")
     return
 

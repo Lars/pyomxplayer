@@ -41,7 +41,7 @@ SOCK_DIR = '/var/run/salt/minion'
 if len(sys.argv) <= 1:
     logger.debug("Need a file to play")
     sys.exit()
-logger.info("Attempting to play ", str(sys.argv[1]))
+logger.info("Attempting to play {}".format(str(sys.argv[1])))
 
 
 #checks to see if movie is moving or if it's over

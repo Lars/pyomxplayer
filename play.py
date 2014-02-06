@@ -63,7 +63,7 @@ logger.info("OMXPlayer is: {}".format(str(o)))
 o.pause()
 
 #check to see if there's a starttime, in iso format, in which case wait
-if len(sys.argv) <= 2:
+if len(sys.argv) >= 3:
     wait_for_starttime(sys.argv[2])
 
 os.system('killall cat')

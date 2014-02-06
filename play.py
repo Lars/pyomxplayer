@@ -7,11 +7,13 @@ import subprocess
 
 from datetime import datetime, timedelta
 from dateutil import parser
+import pytz
+est=pytz.timezone('America/New_York')
 
 # Logging
 try:
     import logging
-    logger = logging.getLogger('play_logger')
+    logger = logging.getLogger('play')
     logger.setLevel(logging.INFO)
     
     # create a file handler
@@ -56,10 +58,10 @@ def checkpos():
 def wait_for_starttime(iso_format_starttime):
     try:
         starttime = parser.parse(iso_format_starttime)
-        print starttime - datetime.now()
+        print (starttime - est.localize(datetime.now())).seconds
         logger.info("It is currently " + str(datetime.now())
         logger.info("Waiting until " + str(starttime))
-        while(datetime.now() < starttime):
+        while(est.localize(datetime.now()) < starttime):
             time.sleep(.1)
         logger.info("Done waiting")
     except Exception, e:

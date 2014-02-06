@@ -6,14 +6,13 @@ import salt.utils.event
 import subprocess
 
 from datetime import datetime, timedelta
-from dateutil import parser
-
+from dateutil import parse4
 import logging
 logging.basicConfig(filename='play.log',level=logging.DEBUG)
 
 
 DELAY_AFTER_PRESSING_START = .5
-DELAY_IN_CHECK_POS = .25
+DELAY_IN_CHECK_POS = .4
 SOCK_DIR = '/var/run/salt/minion'
 
 if len(sys.argv) <= 1:

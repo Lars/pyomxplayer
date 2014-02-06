@@ -49,8 +49,11 @@ def checkpos():
     p = o.position
     time.sleep(DELAY_IN_CHECK_POS)
     if p == o.position:
-        logger.info(o.position)
-        return 'stopped'
+        time.sleep(DELAY_IN_CHECK_POS)
+        if p == o.position:
+            logger.info(o.position)
+            logger.debug("Stopped for slow playback.")
+            return 'stopped'
     else:
         return "playing"
 
@@ -100,7 +103,8 @@ while(1):
         os.system('cat /dev/urandom > /dev/tty1 &')
 
         # notify salt master that it's over
-        logger.info('Phoning home')
+        logger.info('Phoning home.')
         payload = {'data': 'stopped'}
         os.system("""salt-call event.fire_master '{"data": "stopped"}'  'omx'""")
+        logger.info('Play me out, piano cat.')
         sys.exit("Stopped")

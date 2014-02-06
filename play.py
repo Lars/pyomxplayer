@@ -8,15 +8,18 @@ import subprocess
 from datetime import datetime, timedelta
 from dateutil import parser
 
+import logging
+logging.basicConfig(filename='play.log',level=logging.DEBUG)
+
 
 DELAY_AFTER_PRESSING_START = .5
 DELAY_IN_CHECK_POS = .25
 SOCK_DIR = '/var/run/salt/minion'
 
 if len(sys.argv) <= 1:
-    print "Need a file to play"
+    logging.debug("Need a file to play")
     sys.exit()
-print "Attempting to play ", str(sys.argv[1])
+logging.info("Attempting to play ", str(sys.argv[1]))
 
 
 #checks to see if movie is moving or if it's over
@@ -24,7 +27,7 @@ def checkpos():
     p = o.position
     time.sleep(DELAY_IN_CHECK_POS)
     if p == o.position:
-        print o.position
+        logging.info(o.position)
         return 'stopped'
     else:
         return "playing"
@@ -33,17 +36,17 @@ def checkpos():
 def wait_for_starttime(iso_format_starttime):
     try:
         starttime = parser.parse(iso_format_starttime)
-        print "Waiting until " + str(starttime)
+        logging.info("Waiting until " + str(starttime))
         while(datetime.now() < starttime):
             time.sleep(.1)
-        print "Done waiting"
+        logging.info("Done waiting")
     except:
-        print "Improperly formatted starttime: was it ISO?"
+        logging.debug("Improperly formatted starttime: was it ISO?")
     return
 
 #load movie and start paused
 o = OMXPlayer(sys.argv[1])  # carpenter1.mov 'carp/carp/carpenter1_ge.mov'
-print "OMXPlayer is: ", str(o)
+logging.info("OMXPlayer is: {}".format(str(o)))
 o.pause()
 
 #check to see if there's a starttime, in iso format, in which case wait
@@ -52,7 +55,7 @@ if len(sys.argv) <= 2:
 
 os.system('killall cat')
 o.play()
-print "Playing"
+logging.info("Playing")
 time.sleep(DELAY_AFTER_PRESSING_START)  # helps prevent instant stopping if computer hangs on start of play
 
 while(1):
@@ -67,7 +70,7 @@ while(1):
 
         # restart screen saver
         os.system('cat /dev/urandom > /dev/tty1 &')
-                
+
         # notify salt master that it's over
         payload = {'data': 'stopped'}
         os.system("""salt-call event.fire_master '{"data": "stopped"}'  'omx'""")

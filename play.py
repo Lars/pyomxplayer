@@ -16,8 +16,7 @@ if len(sys.argv)<=1:
 	print "Need a file to play"
 	sys.exit()
 	
-
-
+#checks to see if movie is moving or if it's over
 def checkpos():
      p = o.position
      time.sleep(DELAY_IN_CHECK_POS)
@@ -27,24 +26,33 @@ def checkpos():
      else:
          return "playing"
 
-o = OMXPlayer(sys.argv[1]) #carpenter1.mov #'carp/carp/carpenter1_ge.mov'
-o.pause()
-if len(sys.argv)<=2:
-	iso_format_starttime = sys.argv[2]
+def wait_for_starttime(iso_format_starttime):
 	starttime = parser.parse(iso_format_starttime)
 	while(datetime.now()<starttime): time.sleep(.1)
+
+#load movie and start paused
+o = OMXPlayer(sys.argv[1]) #carpenter1.mov #'carp/carp/carpenter1_ge.mov'
+o.pause()
+
+#check to see if there's a starttime, in iso format, in which case wait
+if len(sys.argv)<=2:
+	wait_for_starttime(sys.argv[2])
+
 os.system('killall cat')
 o.play()
-time.sleep(DELAY_AFTER_PRESSING_START)
+time.sleep(DELAY_AFTER_PRESSING_START) #helps prevent instant stopping if computer hangs on start of play
 
 while(1):
 	status = checkpos()
 	if status == 'stopped':
 		o.stop()
+		#regain screen if omxplayer has hogged it
 		subprocess.Popen(["startx"])
 		time.sleep(.4)
 		os.system('sudo killall Xorg')
+		#restart screen saver
 		os.system('cat /dev/urandom > /dev/tty1 &')
+		#notify salt master that it's over
 		payload = {'data': 'stopped'}
         os.system("""salt-call event.fire_master '{"data": "stopped"}'  'omx'""")
 		sys.exit("Stopped")

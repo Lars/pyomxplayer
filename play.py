@@ -4,6 +4,10 @@ from pyomxplayer import OMXPlayer
 import salt.utils.event
 import subprocess
 
+from datetime import datetime, timedelta
+from dateutil import parser
+
+
 DELAY_AFTER_PRESSING_START = .5
 DELAY_IN_CHECK_POS = .25
 SOCK_DIR = '/var/run/salt/minion'
@@ -24,6 +28,11 @@ def checkpos():
          return "playing"
 
 o = OMXPlayer(sys.argv[1]) #carpenter1.mov #'carp/carp/carpenter1_ge.mov'
+o.pause()
+if len(sys.argv)<=2:
+	iso_format_starttime = sys.argv[2]
+	starttime = parser.parse(iso_format_starttime)
+	while(datetime.now()<starttime): time.sleep(.1)
 os.system('killall cat')
 o.play()
 time.sleep(DELAY_AFTER_PRESSING_START)

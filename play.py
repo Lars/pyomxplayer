@@ -35,7 +35,7 @@ except Exception, e:
 
 
 DELAY_AFTER_PRESSING_START = .5
-DELAY_IN_CHECK_POS = .4
+DELAY_IN_CHECK_POS = 1
 SOCK_DIR = '/var/run/salt/minion'
 
 if len(sys.argv) <= 1:

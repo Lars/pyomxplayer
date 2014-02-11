@@ -107,11 +107,15 @@ while(1):
         os.system('cat /dev/urandom > /dev/tty1 &')
 
         # notify salt master that it's over
-        logger.info('Phoning home.')
-        payload = {'data': 'stopped'}
-        os.system("""salt-call event.fire_master '{"data": "stopped"}'  'omx'""")
-        logger.info("killing salt minions")
-        os.system('killall salt-minion')
-        os.system('salt-minion -d')
+        #logger.info('Phoning home.')
+        #payload = {'data': 'stopped'}
+        #os.system("""salt-call event.fire_master '{"data": "stopped"}'  'omx'""")
+        a = os.popen(' ps -e | grep salt-minion').read().strip().split('\n')
+        if len(a<1):
+            logger.info("killing {} salt minions".format(len(a)))
+            output = os.popen('sudo killall salt-minion').read()
+            logger.info(output)
+            output = os.popen('sudo salt-minion -d').read()
+            logger.info(output)
         logger.info('Play me out, piano cat.')
         sys.exit("Stopped")

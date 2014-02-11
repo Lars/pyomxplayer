@@ -35,7 +35,7 @@ except Exception, e:
 
 
 DELAY_AFTER_PRESSING_START = .5
-DELAY_IN_CHECK_POS = 1
+DELAY_IN_CHECK_POS = 2
 SOCK_DIR = '/var/run/salt/minion'
 
 if len(sys.argv) <= 1:
@@ -111,7 +111,8 @@ while(1):
         #payload = {'data': 'stopped'}
         #os.system("""salt-call event.fire_master '{"data": "stopped"}'  'omx'""")
         a = os.popen(' ps -e | grep salt-minion').read().strip().split('\n')
-        if len(a<1):
+        logger.info("There are {} salt minions".format(len(a)))
+        if len(a>1):
             logger.info("killing {} salt minions".format(len(a)))
             output = os.popen('sudo killall salt-minion').read()
             logger.info(output)

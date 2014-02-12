@@ -114,6 +114,8 @@ while(1):
         logger.info("There are {} salt minions".format(len(a)))
         try:
             logger.info("ps yields:\n{}".format(str(a))
+        except Exception, e:
+            logger.error("couldn't log?", exc_info=True)
         try:
             if len(a>1):
                 logger.info("killing {} salt minions".format(len(a)))

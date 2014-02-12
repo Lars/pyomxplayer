@@ -87,7 +87,7 @@ o.pause()
 if len(sys.argv) >= 3:
     wait_for_starttime(sys.argv[2])
 
-os.system('killall cat')
+os.system('killall cat;clear')
 o.play()
 logger.info("Playing")
 time.sleep(DELAY_AFTER_PRESSING_START)  # helps prevent instant stopping if computer hangs on start of play
@@ -118,7 +118,7 @@ while(1):
             logger.error("couldn't log?", exc_info=True)
 
         try:
-            if len(a>1):
+            if len(a)>1:
                 logger.info("killing {} salt minions".format(len(a)))
                 output = os.popen('sudo killall salt-minion').read()
                 logger.info(output)

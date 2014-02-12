@@ -113,11 +113,14 @@ while(1):
         a = os.popen(' ps -e | grep salt-minion').read().strip().split('\n')
         logger.info("There are {} salt minions".format(len(a)))
         logger.info("ps yields:\n{}".format(a)
-        if len(a>1):
-            logger.info("killing {} salt minions".format(len(a)))
-            output = os.popen('sudo killall salt-minion').read()
-            logger.info(output)
-            output = os.popen('sudo salt-minion -d').read()
-            logger.info(output)
+        try:
+            if len(a>1):
+                logger.info("killing {} salt minions".format(len(a)))
+                output = os.popen('sudo killall salt-minion').read()
+                logger.info(output)
+                output = os.popen('sudo salt-minion -d').read()
+                logger.info(output)
+        except Exception, e:
+            logger.error("couldn't kill minions?", exc_info=True)
         logger.info('Play me out, piano cat.')
         sys.exit("Stopped")

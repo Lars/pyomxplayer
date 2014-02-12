@@ -112,7 +112,8 @@ while(1):
         #os.system("""salt-call event.fire_master '{"data": "stopped"}'  'omx'""")
         a = os.popen(' ps -e | grep salt-minion').read().strip().split('\n')
         logger.info("There are {} salt minions".format(len(a)))
-        logger.info("ps yields:\n{}".format(a)
+        try:
+            logger.info("ps yields:\n{}".format(str(a))
         try:
             if len(a>1):
                 logger.info("killing {} salt minions".format(len(a)))

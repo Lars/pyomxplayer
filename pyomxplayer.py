@@ -9,8 +9,9 @@ class OMXPlayer(object):
     _FILEPROP_REXP = re.compile(r".*audio streams (\d+) video streams (\d+) chapters (\d+) subtitles (\d+).*")
     _VIDEOPROP_REXP = re.compile(r".*Video codec ([\w-]+) width (\d+) height (\d+) profile (\d+) fps ([\d.]+).*")
     _AUDIOPROP_REXP = re.compile(r"Audio codec (\w+) channels (\d+) samplerate (\d+) bitspersample (\d+).*")
-    _STATUS_REXP = re.compile(r"V :\s*([\d.]+).*")
-    _DONE_REXP = re.compile(r"have a nice day.*")
+    #_STATUS_REXP = re.compile(r"V :\s*([\d.]+).*")
+    _STATUS_REXP = re.compile(r"M:\s*([\d.]+).*")
+    _DONE_REXP = re.compile(r"have a nice day*")
 
     _LAUNCH_CMD = '/usr/bin/omxplayer -s %s %s'
     _PAUSE_CMD = 'p'
@@ -29,9 +30,9 @@ class OMXPlayer(object):
         self.video = dict()
         self.audio = dict()
         # Get file properties
-        file_props = self._FILEPROP_REXP.match(self._process.readline()).groups()
-        (self.audio['streams'], self.video['streams'],
-         self.chapters, self.subtitles) = [int(x) for x in file_props]
+        #file_props = self._FILEPROP_REXP.match(self._process.readline()).groups()
+        #(self.audio['streams'], self.video['streams'],
+        # self.chapters, self.subtitles) = [int(x) for x in file_props]
         # Get video properties
         video_props = self._VIDEOPROP_REXP.match(self._process.readline()).groups()
         self.video['decoder'] = video_props[0]
@@ -44,9 +45,9 @@ class OMXPlayer(object):
         (self.audio['channels'], self.audio['rate'],
          self.audio['bps']) = [int(x) for x in audio_props[1:]]
 
-        if self.audio['streams'] > 0:
-            self.current_audio_stream = 1
-            self.current_volume = 0.0
+        #if self.audio['streams'] > 0:
+        self.current_audio_stream = 1
+        self.current_volume = 0.0
 
         self._position_thread = Thread(target=self._get_position)
         self._position_thread.start()
